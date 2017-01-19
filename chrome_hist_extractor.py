@@ -4,6 +4,9 @@
 import sqlite3
 
 
+CHROME_QUERY = "SELECT url FROM urls"
+
+
 class ChromeExtractor(object):
     """
     History extractor for chrome sqlite db.
@@ -13,10 +16,14 @@ class ChromeExtractor(object):
         self._db_path = ''
 
     def set_path(self, path):
-        pass
+        self._db_path = path
 
-    def extract(self):
+    def extract(self, output_file):
         try:
-            self.conn = sqlite3.connect(self._db_path)
+            self._conn = sqlite3.connect(self._db_path)
+            self._cur = self._conn.cursor()
+            urls_query = self._cur.execute(CHROME_QUERY)
+            for url in urls_query:
+                output_file.write(url)
         except:
-            pass
+            pass  # "Unable to connect. Make sure that your browser is closed."
